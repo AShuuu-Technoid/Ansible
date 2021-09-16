@@ -1,0 +1,28 @@
+---
+- name: login details
+  local_action: lineinfile  state=present create=yes line={{ item }} path=".credentials/{{ project_name }}/Details.txt"
+  with_items:
+    - "Host Name: {{ hostname }}"
+    - "Project Name: {{ project_name }}"
+    - "User Name: {{ user_name }}"
+    - "Live DB Name: {{ mysql_live_db }}"
+    - "Live DB User Name: {{ mysql_live_user }}"
+    - "Live DB Pass: {{ mysql_live_pass }} "
+    - "UAT DB Name: {{ mysql_uat_db }}"
+    - "UAT DB User Name: {{ mysql_uat_user }}"
+    - "UAT DB Pass: {{ mysql_uat_pass }} "
+  become: false
+  # copy:
+  #   dest: output.txt
+  #   content: "{{ user_name }}"
+
+  # become: yes
+  # local_action: lineinfile line={{ user_name }} path="credentials/{{ project_name }}"
+
+  # local_action:
+  #   lineinfile:
+  #     line: '{{ item }}'
+  #     path: "credentials/{{ project_name }}"
+  #   with_items:
+  #     - "#### EC2 Credentials ####"
+  #     - "Login Username: {{ user_name }}"

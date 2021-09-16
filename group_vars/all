@@ -1,0 +1,20 @@
+---
+# User Creation
+user_name: ashwin
+# user_pas: "{{ lookup('password', 'pass length=14 chars=ascii_letters') }}"
+ssh_key:
+
+add_lang:
+  - 'LANG=en_US.utf-8'
+  - 'LC_ALL=en_US.utf-8'
+
+hostname: "{{ [hostvars[groups['ec2_user'][0]]['ansible_ssh_host']] }}"
+
+project_name: ashwin
+# Mysql
+mysql_live_user:
+mysql_live_db:
+mysql_uat_user:
+mysql_uat_db:
+mysql_live_pass: "{{ lookup('password', '.credentials/{{ project_name }}/mysql/{{ mysql_live_user }} length=14 chars=ascii_letters') }}"
+mysql_uat_pass: "{{ lookup('password', '.credentials/{{ project_name }}/mysql/{{ mysql_uat_user }} length=14 chars=ascii_letters') }}"

@@ -1,0 +1,56 @@
+---
+- name: yum update
+  yum:
+    name: "*"
+    state: present
+    update_cache: yes
+  become: yes
+
+- name: yum | ensure packages are installed
+  raw: sudo amazon-linux-extras install redis4.0 epel nginx1 php7.4 -y
+  # notify: all service
+
+- name: php modules installing
+  yum:
+    name: [
+      'php-gd',
+      'php-mbstring',
+      'php-pdo',
+      'php-xml',
+      'php-pear',
+      'php-pecl-imagick',
+      'php-sodium',
+      'php-bcmath',
+      'php-intl',
+      'ghostscript',
+      'mariadb-server',
+      'python-pip',
+      'python-PyMySQL'
+    ]
+    skip_broken: yes
+    state: present
+  become: yes
+#   # raw: sudo yum install php-gd php-mbstring php-pdo php-xml php-pear php-pecl-imagick php-sodium php-bcmath php-intl mysql -y
+#   # handlers:
+- name: Adding LANG | LC_ALL
+  lineinfile:
+    path: /etc/environment
+    line: '{{ item }}'
+    state: present
+  with_items:
+    - 'LANG=en_US.utf-8'
+    - 'LC_ALL=en_US.utf-8'
+
+- name: Installing php-pecl-mcrypt
+  raw: sudo yum install -y --enablerepo=epel php-mcrypt --skip-broken
+
+- name: all service
+  service:
+    name: "{{ item }}"
+    enabled: yes
+    state: started
+  with_items:
+    - nginx
+    - php-fpm
+    - redis
+    - mariadb

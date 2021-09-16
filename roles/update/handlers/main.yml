@@ -1,0 +1,20 @@
+---
+# - name: start nginx
+#   service: name=nginx state=started
+
+# - name: reload nginx
+#   service: name=nginx state=reloaded
+
+# - name: restart nginx
+#   service: name=nginx state=restarted
+
+- name: all service
+  service:
+    name:
+      [
+        'nginx',
+        'php-fpm',
+        'redis',
+      ]
+    enabled: yes
+    state: started

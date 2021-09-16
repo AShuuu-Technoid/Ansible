@@ -1,0 +1,50 @@
+---
+- name: MySQL | restart mysql
+  service:
+    name: mariadb
+    state: started
+  become: yes
+
+# - name: MySQL | create MySQL configuration file
+#   template:
+#     src: my.cnf.j2
+#     dest: /etc/my.cnf
+#     backup: yes
+#     owner: root
+#     group: root
+#     mode: 0644
+#   become: yes
+
+- name: MySQL | Creating MySQL Live DB
+  mysql_db:
+    name: "{{ mysql_live_db }}"
+    state: present
+  become: yes
+  ignore_errors: true
+
+- name: MySQL | Live User Setup
+  mysql_user:
+    name: "{{ mysql_live_user }}"
+    password: "{{ mysql_live_pass }}"
+    host: 'localhost'
+    priv: '{{ mysql_live_db }}.*:SELECT,INSERT,UPDATE,DELETE,CREATE,DROP,INDEX,ALTER,CREATE TEMPORARY TABLES,CREATE VIEW,EVENT,TRIGGER,SHOW VIEW,CREATE ROUTINE,ALTER ROUTINE'
+    state: present
+  become: yes
+  ignore_errors: true
+
+- name: MySQL | Creating MySQL UAT DB
+  mysql_db:
+    name: "{{ mysql_uat_db }}"
+    state: present
+  become: yes
+  ignore_errors: true
+
+- name: MySQL | UAT User Setup
+  mysql_user:
+    name: "{{ mysql_uat_user }}"
+    password: "{{ mysql_uat_pass }}"
+    host: 'localhost'
+    priv: '{{ mysql_uat_db }}.*:SELECT,INSERT,UPDATE,DELETE,CREATE,DROP,INDEX,ALTER,CREATE TEMPORARY TABLES,CREATE VIEW,EVENT,TRIGGER,SHOW VIEW,CREATE ROUTINE,ALTER ROUTINE'
+    state: present
+  become: yes
+  ignore_errors: true

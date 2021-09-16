@@ -1,0 +1,34 @@
+---
+- name: creating files
+  raw: mkdir /data/{conf/nginx,backup,db,docker,redis,sites/{uat,live}/{public,logs}} -p
+
+- name: Creating Users
+  user:
+      name: "{{ user_name }}"
+      groups:
+        - nginx
+      state: present
+      append: yes
+      shell: /bin/bash
+      createhome: yes
+- name: Adding ssh-key
+  authorized_key:
+      user: "{{ user_name }}"
+      state: present
+      key: "{{ lookup('file', item) }}"
+  with_items: "{{ ssh_key }}"
+
+- name: Changing folder permission
+  file:
+      path: /data/sites
+      owner: "{{ user_name }}"
+      group: nginx
+      recurse: yes
+
+- name: Removing files
+  file:
+      path: "{{ item }}"
+      state: absent
+  with_items:
+    - /etc/nginx/conf.d/php-fpm.conf
+    - /etc/nginx/default.d/php.conf
